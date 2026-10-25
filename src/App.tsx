@@ -342,8 +342,13 @@ function App() {
             <a href="#contact">Contact</a>
           </nav>
 
-          <button className="menu-btn" onClick={() => setMobileOpen((v) => !v)} aria-expanded={mobileOpen}>
-            Menu
+          <button
+            className="menu-btn"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-expanded={mobileOpen}
+            aria-label={mobileOpen ? 'Close mobile navigation' : 'Open mobile navigation'}
+          >
+            {mobileOpen ? 'Close' : 'Menu'}
           </button>
         </div>
         {mobileOpen && (
