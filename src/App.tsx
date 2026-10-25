@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { PointerEvent } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import './App.css';
 
 type Experience = {
@@ -242,25 +244,42 @@ function App() {
   }, []);
 
   useEffect(() => {
+    AOS.init({
+      duration: 900,
+      easing: 'ease-out-cubic',
+      offset: 80,
+      once: false,
+      mirror: false,
+      disable: () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    });
+
+    const refresh = window.setTimeout(() => AOS.refreshHard(), 250);
+    return () => window.clearTimeout(refresh);
+  }, []);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible');
-            entry.target.classList.add('aos-animate');
           }
         });
       },
       { threshold: 0.14 }
     );
 
-    const revealTargets = document.querySelectorAll('.reveal, [data-aos]');
+    const revealTargets = document.querySelectorAll('.reveal:not([data-aos])');
     revealTargets.forEach((el) => observer.observe(el));
 
     return () => {
       revealTargets.forEach((el) => observer.unobserve(el));
     };
   }, []);
+
+  useEffect(() => {
+    AOS.refresh();
+  }, [activeExperience, activeCompetency, mobileOpen]);
 
   useEffect(() => {
     if (!mobileOpen) return;
